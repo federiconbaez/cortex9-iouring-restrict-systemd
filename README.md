@@ -21,7 +21,10 @@ cargo test --test dropin_lab fifty_dropin_generations_stable -- --nocapture
 ```
 
 `apply --fail-without-kernel-support` y el binario `iouring-restrict-enforce`
-salen con código 2 en kernel 6.12 (sin skip silencioso).
+salen con código 2 **en cualquier kernel**: el attach real de
+`IORING_REGISTER_BPF_FILTER_TASK` no está implementado todavía. En el runner
+`ubuntu-24.04` (kernel `7.0.0-1017-azure`) también sale 2, por esa razón y no
+por falta de soporte del kernel.
 
 ## Qué está / no está medido
 
@@ -29,12 +32,12 @@ salen con código 2 en kernel 6.12 (sin skip silencioso).
 |-----|--------|
 | Parseo del perfil #38 + drop-in válido | caja |
 | Self-test de retención post-exec (simulado) | caja |
-| `IORING_REGISTER_BPF_FILTER_TASK` real | VM/CI ≥ 7.0 |
+| `IORING_REGISTER_BPF_FILTER_TASK` real | **no implementado** (enforce.yml queda rojo siempre) |
 
 ## CI
 
 - `.github/workflows/ci.yml`: fmt + `clippy -D warnings` + `cargo test` + reproducción de la medición. Tiene que quedar verde.
-- `.github/workflows/enforce.yml`: corre `cargo run --bin iouring-restrict-enforce` de verdad en el runner, sin `continue-on-error` ni `#[ignore]`. En runners con kernel < 7.0 este workflow queda **rojo** (exit 2): es el resultado esperado y honesto, no un skip.
+- `.github/workflows/enforce.yml`: corre `cargo run --bin iouring-restrict-enforce` de verdad en el runner, sin `continue-on-error` ni `#[ignore]`. Hoy queda **rojo siempre** (exit 2), también en kernel ≥ 7.0, porque el attach task-level no está implementado; no es un skip.
 
 ## Fuentes leídas
 
