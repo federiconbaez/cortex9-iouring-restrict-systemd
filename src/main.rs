@@ -123,12 +123,12 @@ fn main() -> ExitCode {
                 println!("apply=dry-run (no IORING_REGISTER_BPF_FILTER on this path)");
                 return ExitCode::SUCCESS;
             }
-            // Fail hard: this box / typical runners lack Linux ≥ 7.0 filter register.
+            // Fail hard: the real task-level attach is not implemented yet.
             let release = fs::read_to_string("/proc/sys/kernel/osrelease")
                 .unwrap_or_else(|_| "unknown".into());
             eprintln!(
-                "apply=FAIL: kernel {} lacks IORING_REGISTER_BPF_FILTER_TASK; \
-                 refusing to skip (use VM/CI ≥ 7.0)",
+                "apply=FAIL: kernel {}: IORING_REGISTER_BPF_FILTER_TASK attach \
+                 not implemented in this crate; refusing to report success",
                 release.trim()
             );
             ExitCode::from(2)
