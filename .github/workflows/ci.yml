@@ -7,25 +7,25 @@ on:
 
 jobs:
   unit:
-    name: unit (clippy + test)
+    name: fmt + clippy + test + medición
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          components: clippy
-      - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo test --workspace
-
-  enforce:
-    name: enforce (kernel >= 7.0 BPF filter)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: stable
-      - run: uname -a
-      - name: apply must fail hard without support
-        run: cargo run --bin iouring-restrict-enforce
+          components: clippy, rustfmt
+      - name: kernel
+        run: uname -a
+      - name: fmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: test
+        run: cargo test --workspace
+      - name: reproducir medición (1)
+        run: cargo run --quiet --bin iouring-restrict -- dropin --profile fixtures/default.json --bin /usr/bin/iouring-restrict > /tmp/dropin.conf
+      - name: reproducir medición (2)
+        run: cargo run --quiet --bin iouring-restrict -- validate --file /tmp/dropin.conf
+      - name: reproducir medición (3)
+        run: cargo test --test dropin_lab fifty_dropin_generations_stable -- --nocapture

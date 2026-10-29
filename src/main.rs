@@ -1,7 +1,5 @@
 use clap::{Parser, Subcommand};
-use iouring_restrict_systemd::{
-    render_dropin, simulate_retention, validate_dropin, Policy,
-};
+use iouring_restrict_systemd::{render_dropin, simulate_retention, validate_dropin, Policy};
 use std::fs;
 use std::path::PathBuf;
 use std::process::ExitCode;

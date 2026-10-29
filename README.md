@@ -31,6 +31,11 @@ salen con código 2 en kernel 6.12 (sin skip silencioso).
 | Self-test de retención post-exec (simulado) | caja |
 | `IORING_REGISTER_BPF_FILTER_TASK` real | VM/CI ≥ 7.0 |
 
+## CI
+
+- `.github/workflows/ci.yml`: fmt + `clippy -D warnings` + `cargo test` + reproducción de la medición. Tiene que quedar verde.
+- `.github/workflows/enforce.yml`: corre `cargo run --bin iouring-restrict-enforce` de verdad en el runner, sin `continue-on-error` ni `#[ignore]`. En runners con kernel < 7.0 este workflow queda **rojo** (exit 2): es el resultado esperado y honesto, no un skip.
+
 ## Fuentes leídas
 
 - Merge Axboe 591beb0 (containers and systemd como consumidores)

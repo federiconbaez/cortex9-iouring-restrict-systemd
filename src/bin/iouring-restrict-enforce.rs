@@ -3,8 +3,8 @@
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    let release = std::fs::read_to_string("/proc/sys/kernel/osrelease")
-        .unwrap_or_else(|_| "unknown".into());
+    let release =
+        std::fs::read_to_string("/proc/sys/kernel/osrelease").unwrap_or_else(|_| "unknown".into());
     println!("kernel={}", release.trim());
     eprintln!(
         "IORING_REGISTER_BPF_FILTER_TASK / RestrictIOUring applicator \
